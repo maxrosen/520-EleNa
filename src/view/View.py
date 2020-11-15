@@ -49,7 +49,8 @@ class View(object):
 
         filepath = './route.html'
         route_map.save(filepath)
-        webbrowser.open(filepath, new=2)
+        # This was broken on windows (and maybe on Mac). We'll fix it later
+        # webbrowser.open(filepath, new=2)
         self.done = True
         print('Done!')
 

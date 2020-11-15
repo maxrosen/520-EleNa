@@ -1,0 +1,4 @@
+osmnx==0.16.1
+folium==0.11.0
+networkx==2.5
+pick==1.0.0

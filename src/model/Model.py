@@ -130,7 +130,7 @@ class Model(object):
             elevation_stats["net_change"]))
         print('Elevation gain (ascents): {:,.0f}'.format(
             elevation_stats["ascents"]))
-        print('Elevation loss (ascents): {:,.0f}'.format(
+        print('Elevation loss (descents): {:,.0f}'.format(
             elevation_stats["descents"]))
         print('Total elevation change: {:,.0f}'.format(
             elevation_stats["total_change"]))

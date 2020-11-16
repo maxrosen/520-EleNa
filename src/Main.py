@@ -4,9 +4,9 @@ sys.path.insert(1, './controller')
 sys.path.insert(1, './model')
 sys.path.insert(1, './view')
 
-from Controller import Controller
-from Model import Model
-from View import View
+from controller import Controller
+from model import Model
+from view import View
 
 class Main(object):
 

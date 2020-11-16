@@ -12,7 +12,7 @@
 Navigate to `src` folder and enter the command below:
 
 ```python
-python Main.py
+python main.py
 ```
 Follow the on screen prompts to generate routing.
 

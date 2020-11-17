@@ -20,7 +20,6 @@ class Controller(object):
         self.G = None
         self.start = None
         self.end = None
-        # self.get_inputs()
 
     def set_model(self, model):
         self.model = model

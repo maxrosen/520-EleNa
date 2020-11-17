@@ -19,7 +19,7 @@ class Model(object):
         shortest_path_length = self.get_total_length(G, shortest_path)
         can_travel = ((100.0 + extra_travel)*shortest_path_length)/100.0
         print()
-        print("Distance you are willing to travel : ", can_travel)
+        print('Distance you are willing to travel : {:,.0f} meters'.format(can_travel))
 
         t = time.time()
         optimized_route = self.get_op_route(G, origin, destination, extra_travel, mode)
@@ -28,6 +28,7 @@ class Model(object):
         print("Printing Statistics of our algorithm's " + mode + "d elevation route")
         self.print_route_stats(G, optimized_route)
         self.vobj.show_route(G, optimized_route, alt_route=[shortest_path])
+
 
     def get_op_route(self, G, start, end, extra_travel, mode):
         if(mode == 'maximize'):
@@ -38,6 +39,7 @@ class Model(object):
     def max_ele(self, G, source, goal, extra_travel):
         shortest_path = nx.shortest_path(G, source, goal, weight='length')
         shortest_path_length = self.get_total_length(G, shortest_path)
+
         max_path_length = shortest_path_length * (1 + (extra_travel/100))
         max_path = []
         length_allowance = max_path_length - shortest_path_length
@@ -52,7 +54,7 @@ class Model(object):
             highest_elevation = -1
             best_path = []
 
-            for path in nx.all_simple_paths(G, cur_node, next_node, cutoff=5):
+            for path in nx.all_simple_paths(G, cur_node, next_node, cutoff=10):
                 path_elevation = self.get_elevation_stats(G, path)["ascents"]
                 path_length = self.get_total_length(G, path)
                 if path_elevation > highest_elevation:
@@ -67,6 +69,35 @@ class Model(object):
                 max_path.append(j)
         max_path.append(goal)
         return max_path
+
+    def min_ele(self, G, start, goal, viablecost):
+        frontier = []
+        heappush(frontier, (0, start))
+        came_from = {}
+        cost_so_far = {}
+        cost_so_far_ele = {}
+        came_from[start] = None
+        cost_so_far[start] = 0
+        cost_so_far_ele[start] = 0
+        while len(frontier) != 0:
+            (val, current) = heappop(frontier)
+            if current == goal:
+                if cost_so_far[current] <= viablecost:
+                    break
+            for u, next, data in G.edges(current, data=True):
+                new_cost = cost_so_far[current] + \
+                    self.get_cost(G, current, next)
+                new_cost_ele = cost_so_far_ele[current]
+                elevationcost = self.get_elevation_cost(G, current, next)
+                if elevationcost > 0:
+                    new_cost_ele = new_cost_ele + elevationcost
+                if next not in cost_so_far_ele or new_cost_ele < cost_so_far_ele[next]:
+                    cost_so_far_ele[next] = new_cost_ele
+                    cost_so_far[next] = new_cost
+                    priority = new_cost_ele
+                    heappush(frontier, (priority, next))
+                    came_from[next] = current
+        return self.get_path(came_from, start, goal)
 
     def get_elevation_cost(self, G, a, b):
         return (G.nodes[a]['elevation'] - G.nodes[b]['elevation'])
@@ -115,35 +146,6 @@ class Model(object):
         for i in range(len(route)-1):
             cost += self.get_cost(G, route[i], route[i+1])
         return cost
-
-    def min_ele(self, G, start, goal, viablecost):
-        frontier = []
-        heappush(frontier, (0, start))
-        came_from = {}
-        cost_so_far = {}
-        cost_so_far_ele = {}
-        came_from[start] = None
-        cost_so_far[start] = 0
-        cost_so_far_ele[start] = 0
-        while len(frontier) != 0:
-            (val, current) = heappop(frontier)
-            if current == goal:
-                if cost_so_far[current] <= viablecost:
-                    break
-            for u, next, data in G.edges(current, data=True):
-                new_cost = cost_so_far[current] + \
-                    self.get_cost(G, current, next)
-                new_cost_ele = cost_so_far_ele[current]
-                elevationcost = self.get_elevation_cost(G, current, next)
-                if elevationcost > 0:
-                    new_cost_ele = new_cost_ele + elevationcost
-                if next not in cost_so_far_ele or new_cost_ele < cost_so_far_ele[next]:
-                    cost_so_far_ele[next] = new_cost_ele
-                    cost_so_far[next] = new_cost
-                    priority = new_cost_ele
-                    heappush(frontier, (priority, next))
-                    came_from[next] = current
-        return self.get_path(came_from, start, goal)
 
     def print_route_stats(self, G, route):
         print('Total trip distance: {:,.0f} meters'.format(

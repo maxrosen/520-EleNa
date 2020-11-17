@@ -30,18 +30,18 @@ class View(object):
         t = threading.Thread(target=self.loading_animation)
         t.start()
 
-        route_map = ox.plot_route_folium(G, route, route_opacity=0.75, route_color="#42aaf5", popup_attribute='name', tiles='Stamen Terrain')
+        route_map = ox.plot_route_folium(G, route, route_opacity=0.75, route_color="#42aaf5", tiles='Stamen Terrain')
 
         #alt_route[0] is networkx's shortest path, weighted by length
         if(len(alt_route)>0):
-            ox.plot_route_folium(G, alt_route[0], route_map, route_opacity=0.75, route_color="#eb4034", popup_attribute='name')
+            ox.plot_route_folium(G, alt_route[0], route_map, route_opacity=0.75, route_color="#eb4034")
 
         # alt_route[1] is networkx's shortest path, weighted by elevation
         if(len(alt_route)>1):
-            ox.plot_route_folium(G, alt_route[1], route_map, route_opacity=0.75, route_color="#fcba03", popup_attribute='name')
+            ox.plot_route_folium(G, alt_route[1], route_map, route_opacity=0.75, route_color="#fcba03")
 
         #add our route on top of others
-        ox.plot_route_folium(G, route, route_map, route_opacity=0.75, route_color="#42aaf5", popup_attribute='name', tiles='Stamen Terrain')
+        ox.plot_route_folium(G, route, route_map, route_opacity=0.75, route_color="#42aaf5", tiles='Stamen Terrain')
 
         #add markers to start and end nodes
         folium.Marker(route_coords[0].split(","), popup='<i>Start</i>', icon=folium.Icon(color='green')).add_to(route_map)

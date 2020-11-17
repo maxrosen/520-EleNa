@@ -27,23 +27,22 @@ class Model(object):
         can_travel = ((100.0 + extra_travel)*shortest_path_length)/100.0
         print()
         print("Distance you are willing to travel : ", can_travel)
-        if mode == 'minimize':
-            # Strategy1
-            t = time.time()
-            route_minimize_elevation1 = self.dijkstra_search(
-                G, origin, destination, can_travel, mode='minimize')
-            print()
-            print("Dijkstra algorithm took :", time.time()-t, " seconds")
-            print("Printing Statistics of our algorithm's minimum Elevation route")
-            self.print_route_stats(G, route_minimize_elevation1)
-            self.vobj.show_route(G, route_minimize_elevation1, alt_route=[
-                                 shortest_path, shortest_elevation_path])
 
-    def get_elevation_cost(self, G_proj, a, b):
-        return (G_proj.nodes[a]['elevation'] - G_proj.nodes[b]['elevation'])
+        # Strategy1
+        t = time.time()
+        route_minimize_elevation1 = self.dijkstra_search(G, origin, destination, can_travel, mode)
+        print()
+        print("Dijkstra algorithm took :", time.time()-t, " seconds")
+        print("Printing Statistics of our algorithm's minimum Elevation route")
+        self.print_route_stats(G, route_minimize_elevation1)
+        self.vobj.show_route(G, route_minimize_elevation1, alt_route=[
+                             shortest_path, shortest_elevation_path])
 
-    def get_cost(self, G_proj, a, b):
-        return G_proj.edges[a, b, 0]['length']
+    def get_elevation_cost(self, G, a, b):
+        return (G.nodes[a]['elevation'] - G.nodes[b]['elevation'])
+
+    def get_cost(self, G, a, b):
+        return G.edges[a, b, 0]['length']
 
     def get_path(self, came_from, origin, destination):
         route_by_length_minele = []
@@ -55,7 +54,7 @@ class Model(object):
         route_by_length_minele = route_by_length_minele[::-1]
         return route_by_length_minele
 
-    def get_elevation_stats(self, G_proj, route):
+    def get_elevation_stats(self, G, route):
         if route is None:
             return 0
         elevation_stats = {
@@ -66,7 +65,7 @@ class Model(object):
         }
         for i in range(len(route)-1):
             elevation_change = self.get_elevation_cost(
-                G_proj, route[i], route[i+1])
+                G, route[i], route[i+1])
             if elevation_change == 0:
                 continue
             if elevation_change > 0:
@@ -79,15 +78,15 @@ class Model(object):
 
         return elevation_stats
 
-    def get_total_length(self, G_proj, route):
+    def get_total_length(self, G, route):
         if route is None:
             return 0
         cost = 0
         for i in range(len(route)-1):
-            cost += self.get_cost(G_proj, route[i], route[i+1])
+            cost += self.get_cost(G, route[i], route[i+1])
         return cost
 
-    def dijkstra_search(self, graph, start, goal, viablecost, mode='minimize'):
+    def dijkstra_search(self, G, start, goal, viablecost, mode='minimize'):
         frontier = []
         heappush(frontier, (0, start))
         came_from = {}
@@ -101,11 +100,11 @@ class Model(object):
             if current == goal:
                 if cost_so_far[current] <= viablecost:
                     break
-            for u, next, data in graph.edges(current, data=True):
+            for u, next, data in G.edges(current, data=True):
                 new_cost = cost_so_far[current] + \
-                    self.get_cost(graph, current, next)
+                    self.get_cost(G, current, next)
                 new_cost_ele = cost_so_far_ele[current]
-                elevationcost = self.get_elevation_cost(graph, current, next)
+                elevationcost = self.get_elevation_cost(G, current, next)
                 if elevationcost > 0:
                     new_cost_ele = new_cost_ele + elevationcost
                 if next not in cost_so_far or new_cost < cost_so_far[next]:
@@ -118,14 +117,11 @@ class Model(object):
                     came_from[next] = current
         return self.get_path(came_from, start, goal)
 
-    def print_route_stats(self, G_proj, route):
-        route_lengths = ox.utils_graph.get_route_edge_attributes(
-            G_proj, route, 'length')
-
+    def print_route_stats(self, G, route):
         print('Total trip distance: {:,.0f} meters'.format(
-            self.get_total_length(G_proj, route)))
+            self.get_total_length(G, route)))
 
-        elevation_stats = self.get_elevation_stats(G_proj, route)
+        elevation_stats = self.get_elevation_stats(G, route)
         print('Net elevation change: {:,.0f}'.format(
             elevation_stats["net_change"]))
         print('Elevation gain (ascents): {:,.0f}'.format(

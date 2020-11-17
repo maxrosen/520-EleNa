@@ -11,12 +11,12 @@ from view import View
 class Main(object):
 
     def __init__(self):
-        self.TEST_FLAG = False
         self.run()
 
     def run(self):
         model = Model()
         controller = Controller()
+        controller.get_inputs()
         view = View()
         model.set_view(view)
         controller.set_model(model)

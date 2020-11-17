@@ -9,8 +9,6 @@ sys.path.insert(1, './graphs')
 
 class Controller(object):
     def __init__(self):
-        self.VALID_MODES = ['minimize', 'maximize']
-        self.VALID_TYPES = ['driving', 'walking', 'biking']
         self.start_lat = None
         self.start_long = None
         self.end_lat = None
@@ -19,7 +17,10 @@ class Controller(object):
         self.mode = None
         self.model = None
         self.travel_type = None
-        self.get_inputs()
+        self.G = None
+        self.start = None
+        self.end = None
+        # self.get_inputs()
 
     def set_model(self, model):
         self.model = model

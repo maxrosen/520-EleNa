@@ -56,7 +56,7 @@ class Controller(object):
         print()
 
         while True:
-            start = input("Please enter the Latitude and Longitude of the starting location (separated by a comma) \n")
+            start = input("Please enter the Latitude and Longitude of the starting location (separated by a comma): \n")
             if "," not in start:
                 print("Sorry, that input did not include a comma")
                 continue
@@ -65,14 +65,15 @@ class Controller(object):
                 if self.is_number(self.start_lat) and self.is_number(self.start_long) and "." in self.start_lat and "." in self.start_long:
                     break
                 else:
-                    print("Sorry, that input is invalid")
+                    print("Sorry, please enter valid numbers with decimals")
                     continue
 
-        print("Latitude of starting location:", float(self.start_lat), "and Longitude of starting location", float(self.start_long))
+        print("Starting location coordinates (", float(self.start_lat), ",",
+              float(self.start_long), ") : (lat,long)")
         print()
 
         while True:
-            end = input("Please enter the Latitude and Longitude of the end location (separated by a comma) \n")
+            end = input("Please enter the Latitude and Longitude of the end location (separated by a comma): \n")
             if "," not in end:
                 print("Sorry, that input did not include a comma")
                 continue
@@ -81,14 +82,14 @@ class Controller(object):
                 if self.is_number(self.end_lat) and self.is_number(self.end_long) and "." in self.end_lat and "." in self.end_long:
                     break
                 else:
-                    print("Sorry, that input is invalid")
+                    print("Sorry, please enter valid numbers with decimals")
                     continue
 
-        print("Latitude of end location:", float(self.end_lat), "and Longitude of end location", float(self.end_long))
+        print("Ending location coordinates (", float(self.end_lat), ",", float(self.end_long), ") : (lat,long)")
         print()
 
         while True:
-            self.extra_travel = input("Please enter the percentage of length over the shortest path you are willing to travel \n")
+            self.extra_travel = input("Please enter the percentage of length over the shortest path you are willing to travel: \n")
             if self.is_number(self.extra_travel):
                 self.extra_travel = float(self.extra_travel)
                 break

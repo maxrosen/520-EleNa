@@ -44,8 +44,8 @@ class View(object):
         ox.plot_route_folium(G, route, route_map, route_opacity=0.75, route_color="#42aaf5", tiles='Stamen Terrain')
 
         #add markers to start and end nodes
-        folium.Marker(route_coords[0].split(","), popup='<i>Start</i>', icon=folium.Icon(color='green')).add_to(route_map)
-        folium.Marker(route_coords[-1].split(","), popup='<i>End</i>', icon=folium.Icon(color='blue')).add_to(route_map)
+        folium.Marker(route_coords[0].split(","), popup='<i>Start</i>', icon=folium.Icon(color='blue', icon='unchecked')).add_to(route_map)
+        folium.Marker(route_coords[-1].split(","), popup='<i>End</i>', icon=folium.Icon(color='green', icon='flag')).add_to(route_map)
 
         filepath = './route.html'
         route_map.save(filepath)

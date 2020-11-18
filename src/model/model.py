@@ -10,8 +10,8 @@ class Model(object):
     def set_view(self, vobj):
         self.vobj = vobj
 
-    def get_route(self, G, origin, destination, extra_travel, mode):
-        shortest_path = nx.shortest_path(G, origin, destination, weight='length')
+    def get_route(self, G, start, end, extra_travel, mode):
+        shortest_path = nx.shortest_path(G, start, end, weight='length')
         print()
         print("Printing Statistics of Shortest path route")
         self.print_route_stats(G, shortest_path)
@@ -22,7 +22,7 @@ class Model(object):
         print('Distance you are willing to travel : {:,.0f} meters'.format(can_travel))
 
         t = time.time()
-        optimized_route = self.get_op_route(G, origin, destination, extra_travel, mode)
+        optimized_route = self.get_op_route(G, start, end, can_travel, mode)
         print()
         print("Our algorithm took :", time.time() - t, " seconds")
         print("Printing Statistics of our algorithm's " + mode + "d elevation route")
@@ -30,20 +30,20 @@ class Model(object):
         self.vobj.show_route(G, optimized_route, alt_route=[shortest_path])
 
 
-    def get_op_route(self, G, start, end, extra_travel, mode):
+    def get_op_route(self, G, start, end, can_travel, mode):
         if(mode == 'maximize'):
-            return self.max_ele(G, start, end, extra_travel)
+            return self.max_ele(G, start, end, can_travel)
         else:
-            return self.min_ele(G, start, end, extra_travel)
+            return self.min_ele(G, start, end, can_travel)
 
-    def max_ele(self, G, source, goal, extra_travel):
-        shortest_path = nx.shortest_path(G, source, goal, weight='length')
+    def max_ele(self, G, start, goal, can_travel):
+        shortest_path = nx.shortest_path(G, start, goal, weight='length')
         shortest_path_length = self.get_total_length(G, shortest_path)
 
-        max_path_length = shortest_path_length * (1 + (extra_travel/100))
+        max_path_length = can_travel
         max_path = []
         length_allowance = max_path_length - shortest_path_length
-        if (extra_travel < 0.05):
+        if (can_travel == shortest_path_length):
             return shortest_path
 
         for i in range(0, len(shortest_path) - 1):
@@ -70,7 +70,7 @@ class Model(object):
         max_path.append(goal)
         return max_path
 
-    def min_ele(self, G, start, goal, viablecost):
+    def min_ele(self, G, start, goal, can_travel):
         frontier = []
         heappush(frontier, (0, start))
         came_from = {}
@@ -82,7 +82,7 @@ class Model(object):
         while len(frontier) != 0:
             (val, current) = heappop(frontier)
             if current == goal:
-                if cost_so_far[current] <= viablecost:
+                if cost_so_far[current] <= can_travel:
                     break
             for u, next, data in G.edges(current, data=True):
                 new_cost = cost_so_far[current] + \

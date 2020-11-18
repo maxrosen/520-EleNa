@@ -32,7 +32,7 @@ class Model(object):
 
     def get_op_route(self, G, start, end, can_travel, mode):
         # Uncomment the line below to use the improved max elevation search. I'll make this pretty later 
-        # self.max_ele = self.get_max_ele_hill_climb
+        self.max_ele = self.get_max_ele_hill_climb
         if(mode == 'maximize'):
             return self.max_ele(G, start, end, can_travel)
         else:

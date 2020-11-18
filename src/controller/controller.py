@@ -7,7 +7,11 @@ import os
 
 sys.path.insert(1, './graphs')
 
+
 class Controller(object):
+    """
+    Controller object
+    """
     def __init__(self):
         self.start_lat = None
         self.start_long = None
@@ -22,10 +26,16 @@ class Controller(object):
         self.end = None
 
     def set_model(self, model):
+        """
+        Updates model and route of controller
+        """
         self.model = model
         self.model.get_route(self.G, self.start, self.end, self.extra_travel, self.mode)
 
     def is_number(self, s):
+        """
+        Determines if valid number
+        """
         try:
             float(s)
             return True
@@ -40,21 +50,25 @@ class Controller(object):
         return False
 
     def get_inputs(self):
-        #Taking input
+        """
+        Gets the parameters of elevation problem to solve
+        """
         os.system('cls' if os.name == 'nt' else 'clear')
-
+        # Determine route type
         travel_type_title = 'Please choose your routing type: '
         travel_type_options = ['Driving', 'Walking', 'Biking']
         self.travel_type = pick(travel_type_options, travel_type_title)[0].lower()
         print('Selected routing for ' + self.travel_type)
         print()
 
+        # Determine elevation max/min type
         mode_title = 'Would you like to maximize or minimize elevation gain?'
         mode_options = ['maximize', 'minimize']
         self.mode = pick(mode_options, mode_title)[0].lower()
         print('Algorithm will ' + self.mode + ' elevation gain')
         print()
 
+        # get start coordinates
         while True:
             start = input("Please enter the Latitude and Longitude of the starting location (separated by a comma): \n")
             if "," not in start:
@@ -67,11 +81,11 @@ class Controller(object):
                 else:
                     print("Sorry, please enter valid numbers with decimals")
                     continue
-
         print("Starting location coordinates (", float(self.start_lat), ",",
               float(self.start_long), ") : (lat,long)")
         print()
 
+        # get end coordinates
         while True:
             end = input("Please enter the Latitude and Longitude of the end location (separated by a comma): \n")
             if "," not in end:
@@ -84,10 +98,10 @@ class Controller(object):
                 else:
                     print("Sorry, please enter valid numbers with decimals")
                     continue
-
         print("Ending location coordinates (", float(self.end_lat), ",", float(self.end_long), ") : (lat,long)")
         print()
 
+        # Determine extra travel percentage
         while True:
             self.extra_travel = input("Please enter the percentage of length over the shortest path you are willing to travel: \n")
             if self.is_number(self.extra_travel):
@@ -96,16 +110,18 @@ class Controller(object):
             else:
                 print("Please enter a number")
                 continue
-
         print()
 
+        # Update graph with new params
         self.G = self.get_map()
         self.start = ox.get_nearest_node(self.G, (float(self.start_lat), float(self.start_long)))
         self.end = ox.get_nearest_node(self.G, (float(self.end_lat), float(self.end_long)))
 
-
     def get_map(self):
-        #Load in Pickle file of Hampshire County driving map as default, change based on routing option
+        """
+        Load in Pickle file of Hampshire County driving map as default.
+        Change file based on routing option.
+        """
 
         graph_file = "./graphs/graph.pkl"
         if self.travel_type == "driving":

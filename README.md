@@ -18,3 +18,10 @@ Follow the on screen prompts to generate routing.
 
 Route map file `route.html` will be generated in the `src`
 folder, open to view routing.
+
+## Testing
+To run the test suite, navigate to the `src` folder and enter the command below
+
+```python
+python test.py
+```

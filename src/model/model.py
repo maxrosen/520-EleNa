@@ -8,9 +8,22 @@ import time
 class Model(object):
 
     def set_view(self, vobj):
+        """
+        Sets the view
+        :param vobj: the View object that the value will be set to
+        """
         self.vobj = vobj
 
     def get_route(self, G, start, end, extra_travel, mode):
+        """
+        Finds a path with elevation maximized or minimized as specified (within a specified path length).
+        Also provides statistics in comparison with the shortest route (not accounting for elevation)
+        :param G: (networkx MultiDiGraph object) The graph representing the map
+        :param start: (node) The starting point
+        :param goal: (node) The end point 
+        :param extra_travel: (number) The percentage over the shortest path length that the user is willing to travel.
+        :param mode: ('maximize' or 'mimimize') Specifies if the route should maximize or minimize elevation
+        """
         shortest_path = nx.shortest_path(G, start, end, weight='length')
         print()
         print("Printing Statistics of Shortest path route")
@@ -31,78 +44,36 @@ class Model(object):
 
 
     def get_op_route(self, G, start, end, can_travel, mode):
+<<<<<<< Updated upstream
         # Uncomment the line below to use the improved max elevation search. I'll make this pretty later 
         self.max_ele = self.get_max_ele_hill_climb
+=======
+        """
+        Finds a path with elevation maximized or minimized as specified (within a specified path length)
+        :param G: (networkx MultiDiGraph object) The graph representing the map
+        :param start: (node) The starting point
+        :param goal: (node) The end point 
+        :param can_travel: (number) The maximum langth a valid path is allowed to have in meters
+        :param mode: ('maximize' or 'mimimize') Specifies if the route should maximize or minimize elevation
+        :return: The minimized/maximized elevation path as a list of nodes
+        """
+>>>>>>> Stashed changes
         if(mode == 'maximize'):
             return self.max_ele(G, start, end, can_travel)
-        else:
+        elif(mode == 'maximize'):
             return self.min_ele(G, start, end, can_travel)
+        else:
+            raise Exception("Invalid mode specified. Valid modes: 'minimize', 'maximize'")
 
     def max_ele(self, G, start, goal, can_travel):
-        shortest_path = nx.shortest_path(G, start, goal, weight='length')
-        shortest_path_length = self.get_total_length(G, shortest_path)
-
-        max_path_length = can_travel
-        max_path = []
-        length_allowance = max_path_length - shortest_path_length
-        if (can_travel == shortest_path_length):
-            return shortest_path
-
-        for i in range(0, len(shortest_path) - 1):
-            cur_node = shortest_path[i]
-            next_node = shortest_path[i + 1]
-            min_distance = G[cur_node][next_node][0]['length']
-            allowance = length_allowance * (min_distance / shortest_path_length)
-            highest_elevation = -1
-            best_path = []
-
-            for path in nx.all_simple_paths(G, cur_node, next_node, cutoff=10):
-                path_elevation = self.get_elevation_stats(G, path)["ascents"]
-                path_length = self.get_total_length(G, path)
-                if path_elevation > highest_elevation:
-                    if path_length <= allowance + min_distance:
-                        highest_elevation = path_elevation
-                        best_path = path
-
-            best_path_length = self.get_total_length(G, best_path)
-            length_allowance -= (best_path_length - min_distance)
-
-            for j in best_path[:-1]:
-                max_path.append(j)
-        max_path.append(goal)
-        return max_path
-
-    def min_ele(self, G, start, goal, can_travel):
-        frontier = []
-        heappush(frontier, (0, start))
-        came_from = {}
-        cost_so_far = {}
-        cost_so_far_ele = {}
-        came_from[start] = None
-        cost_so_far[start] = 0
-        cost_so_far_ele[start] = 0
-        while len(frontier) != 0:
-            (val, current) = heappop(frontier)
-            if current == goal:
-                if cost_so_far[current] <= can_travel:
-                    break
-            for u, next, data in G.edges(current, data=True):
-                new_cost = cost_so_far[current] + \
-                    self.get_cost(G, current, next)
-                new_cost_ele = cost_so_far_ele[current]
-                elevationcost = self.get_elevation_cost(G, current, next)
-                if elevationcost > 0:
-                    new_cost_ele = new_cost_ele + elevationcost
-                if next not in cost_so_far_ele or new_cost_ele < cost_so_far_ele[next]:
-                    cost_so_far_ele[next] = new_cost_ele
-                    cost_so_far[next] = new_cost
-                    priority = new_cost_ele
-                    heappush(frontier, (priority, next))
-                    came_from[next] = current
-        return self.get_path(came_from, start, goal)
-
-    def get_max_ele_hill_climb(self, G, start, goal, can_travel):
-        
+        """
+        Finds a path with elevation maximized (within a specified path length)
+        :param G: (networkx MultiDiGraph object) The graph representing the map
+        :param start: (node) The starting point
+        :param goal: (node) The end point 
+        :param can_travel: (number) The maximum langth a valid path is allowed to have in meters
+        :return: The maximized elevation path as a list of nodes
+        """
         # Get the shortest path and its length 
         shortest_path = nx.shortest_path(G, start, goal, weight='length')
         shortest_path_length = self.get_total_length(G, shortest_path)
@@ -122,18 +93,16 @@ class Model(object):
             # Filter the neighbors to find the valid possible next nodes
             valid_neighbors = []
             for nbr in neighbors:
-                # Filter out the neighbors that are in the path and have no valid neighbors
-                if (nbr in curr_path) or (nbr in bad_nodes):
-                    continue
+                # Filter out the neighbors that are in the path or are bad (ie: have no valid neighbors)
+                if (nbr not in curr_path) and (nbr not in bad_nodes):
+                    nbr_goal_path = nx.shortest_path(G, nbr, goal, weight='length')
+                    nbr_goal_length = self.get_total_length(G, nbr_goal_path)
+                    curr_path_length = self.get_total_length(G, curr_path)
+                    curr_nbr_edge_cost = self.get_cost(G, curr_node, nbr)
 
-                nbr_goal_path = nx.shortest_path(G, nbr, goal, weight='length')
-                nbr_goal_length = self.get_total_length(G, nbr_goal_path)
-                curr_path_length = self.get_total_length(G, curr_path)
-                curr_nbr_edge_cost = self.get_cost(G, curr_node, nbr)
-
-                # Append only the nodes that will not cause the path length to be too long
-                if curr_path_length + curr_nbr_edge_cost + nbr_goal_length <= can_travel:
-                    valid_neighbors.append(nbr)
+                    # Append only the nodes that will not cause the path length to be too long
+                    if curr_path_length + curr_nbr_edge_cost + nbr_goal_length <= can_travel:
+                        valid_neighbors.append(nbr)
 
             # If a node has no valid neighbors
             if (len(valid_neighbors) == 0):
@@ -156,24 +125,102 @@ class Model(object):
 
         return curr_path
 
-    def get_elevation_cost(self, G, a, b):
-        return (G.nodes[a]['elevation'] - G.nodes[b]['elevation'])
+    def min_ele(self, G, start, goal, can_travel):
+        """
+        Finds a path with elevation gain minimized (within a specified path length)
+        :param G: (networkx MultiDiGraph object) The graph representing the map
+        :param start: (node) The starting point
+        :param goal: (node) The end point 
+        :param can_travel: (number) The maximum langth a valid path is allowed to have in meters
+        :return: The minimized elevation path as a list of nodes
+        """
+        frontier = []
+        heappush(frontier, (0, start))
 
-    def get_cost(self, G, a, b):
-        edge = G.edges[a, b, 0]
+        prev_nodes = {}
+        prev_nodes[start] = None
+        
+        curr_costs = {}
+        curr_costs[start] = 0
+
+        curr_ele_costs = {}
+        curr_ele_costs[start] = 0
+
+        while len(frontier) != 0:
+            (val, curr_node) = heappop(frontier)
+            if curr_node == goal:
+                if curr_costs[curr_node] <= can_travel:
+                    break
+            
+            # Get all edges that are incident to the current node
+            for u, next, data in G.edges(curr_node, data=True):
+                new_cost = curr_costs[curr_node] + self.get_cost(G, curr_node, next)
+                new_ele_cost = curr_ele_costs[curr_node]
+                elevationcost = self.get_elevation_cost(G, curr_node, next)
+
+                if elevationcost > 0:
+                    new_ele_cost = new_ele_cost + elevationcost
+
+                # If next is an unexplored node or if the current path has a 
+                # lower elevation cost than any other path to next
+                if next not in curr_ele_costs or new_ele_cost < curr_ele_costs[next]:
+                    # Update costs
+                    curr_ele_costs[next] = new_ele_cost
+                    curr_costs[next] = new_cost
+                    # Push next onto frontier with updated priority
+                    heappush(frontier, (new_ele_cost, next))
+                    # Make next the previous node for curr_node
+                    prev_nodes[next] = curr_node
+
+        # Get a path from the set of previous nodes
+        path = self.get_path_from_prevs(prev_nodes, start, goal)
+        return path
+
+    def get_elevation_cost(self, G, start, end):
+        """
+        Gets the elevation cost between two nodes
+        :param G: (networkx MultiDiGraph object) The graph representing the map
+        :param start: (node) The starting point
+        :param end: (node) The end point 
+        :return: The elevation cost between the two nodes in meters
+        """
+        return (G.nodes[start]['elevation'] - G.nodes[end]['elevation'])
+
+    def get_cost(self, G, start, end):
+        """
+        Gets the cost of an edge between two nodes in meters
+        :param G: (networkx MultiDiGraph object) The graph representing the map
+        :param start: (node) The starting point
+        :param end: (node) The end point 
+        :return: (number) the cost of the edge between start and end in meters
+        """
+        edge = G.edges[start, end, 0]
         return edge['length']
 
-    def get_path(self, came_from, origin, destination):
-        route_by_length_minele = []
-        p = destination
-        route_by_length_minele.append(p)
-        while p != origin:
-            p = came_from[p]
-            route_by_length_minele.append(p)
-        route_by_length_minele = route_by_length_minele[::-1]
-        return route_by_length_minele
+    def get_path_from_prevs(self, prev_nodes, start, goal):
+        """
+        Finds a path from a dictionary of previous nodes
+        :param prev_nodes: a dictionary of nodes, indexed by nodes, where each index node points to the preceeding node in a path
+        :param start: (node) the starting point of the path
+        :param goal: (node) the goal node of the path
+        :return: the path as a list of nodes
+        """
+        route = []
+        curr_node = goal
+        route.append(curr_node)
+        while curr_node != start:
+            curr_node = prev_nodes[curr_node]
+            route.append(curr_node)
+        route = route[::-1]
+        return route
 
     def get_elevation_stats(self, G, route):
+        """
+        Gathers statistics regarding elevation about a route
+        :param G: (networkx MultiDiGraph object) The graph representing the map
+        :param route: the route as a list of nodes
+        :return: a dictionary containing the net elevation change, total elevation gain, total elevation loss, and total elevation change in meters
+        """
         if route is None:
             return 0
         elevation_stats = {
@@ -198,6 +245,12 @@ class Model(object):
         return elevation_stats
 
     def get_total_length(self, G, route):
+        """
+        Finds and returns the length of a route, disregarding elevation, in meters
+        :param G: (networkx MultiDiGraph object) The graph representing the map
+        :param route: the route as a list of nodes
+        :return: (number) the length of the route in meters
+        """
         if route is None or len(route) <= 1:
             return 0
         cost = 0
@@ -206,6 +259,11 @@ class Model(object):
         return cost
 
     def print_route_stats(self, G, route):
+        """
+        Prints the statistics about a route, including distance and elevation statistics
+        :param G: (networkx MultiDiGraph object) The graph representing the map
+        :param route: the route as a list of nodes
+        """
         print('Total trip distance: {:,.0f} meters'.format(
             self.get_total_length(G, route)))
 

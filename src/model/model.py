@@ -44,10 +44,6 @@ class Model(object):
 
 
     def get_op_route(self, G, start, end, can_travel, mode):
-<<<<<<< Updated upstream
-        # Uncomment the line below to use the improved max elevation search. I'll make this pretty later 
-        self.max_ele = self.get_max_ele_hill_climb
-=======
         """
         Finds a path with elevation maximized or minimized as specified (within a specified path length)
         :param G: (networkx MultiDiGraph object) The graph representing the map
@@ -57,7 +53,6 @@ class Model(object):
         :param mode: ('maximize' or 'mimimize') Specifies if the route should maximize or minimize elevation
         :return: The minimized/maximized elevation path as a list of nodes
         """
->>>>>>> Stashed changes
         if(mode == 'maximize'):
             return self.max_ele(G, start, end, can_travel)
         elif(mode == 'maximize'):

@@ -9,10 +9,19 @@ from branca.element import Template, MacroElement
 
 
 class View(object):
+    """
+    View object
+    """
     def __init__(self):
         self.done = False
 
     def show_route(self, G, route, alt_route=None):
+        """
+        Takes optimized route and displays it on a folium map
+        :param G: (networkx MultiDiGraph object) The graph representing the map
+        :param route: (list) Optimized route
+        :param alt_route: (list) Additional routes to be displayed on map
+        """
         template = self.get_template()
 
         route_coords = []
@@ -64,6 +73,9 @@ class View(object):
         print('Done!')
 
     def loading_animation(self):
+        """
+        Displays loading animation
+        """
         for c in itertools.cycle(['.', '..', '...']):
             if self.done:
                 break
@@ -73,6 +85,10 @@ class View(object):
         sys.stdout.flush()
 
     def get_template(self):
+        """
+        Returns style template for folium map webpage
+        :return: Stylesheet template
+        """
         template = """
         {% macro html(this, kwargs) %}
 

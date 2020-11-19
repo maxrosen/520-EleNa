@@ -35,6 +35,7 @@ class Controller(object):
     def is_number(self, s):
         """
         Determines if valid number
+        :param s: (number) Number to be validated
         """
         try:
             float(s)
@@ -121,6 +122,7 @@ class Controller(object):
         """
         Load in Pickle file of Hampshire County driving map as default.
         Change file based on routing option.
+        :return: The selected graph of Hampshire County
         """
 
         graph_file = "./graphs/graph.pkl"

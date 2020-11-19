@@ -14,6 +14,9 @@ class Main(object):
         self.run()
 
     def run(self):
+        """
+        Executes program to find optimized route based on user inputs
+        """
         model = Model()
         controller = Controller()
         controller.get_inputs()

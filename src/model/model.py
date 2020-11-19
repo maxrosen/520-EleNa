@@ -55,7 +55,7 @@ class Model(object):
         """
         if(mode == 'maximize'):
             return self.max_ele(G, start, end, can_travel)
-        elif(mode == 'maximize'):
+        elif(mode == 'minimize'):
             return self.min_ele(G, start, end, can_travel)
         else:
             raise Exception("Invalid mode specified. Valid modes: 'minimize', 'maximize'")

@@ -6,6 +6,7 @@ import itertools
 import threading
 import sys
 from branca.element import Template, MacroElement
+import os
 
 
 class View(object):
@@ -15,14 +16,14 @@ class View(object):
     def __init__(self):
         self.done = False
 
-    def show_route(self, G, route, alt_route=None):
+    def show_route(self, G, route, elevation_stats_optimized, elevation_stats_shortest, total_distance_optimized, total_distance_shortest, alt_route=None):
         """
         Takes optimized route and displays it on a folium map
         :param G: (networkx MultiDiGraph object) The graph representing the map
         :param route: (list) Optimized route
         :param alt_route: (list) Additional routes to be displayed on map
         """
-        template = self.get_template()
+        template = self.get_template(elevation_stats_optimized, elevation_stats_shortest, total_distance_optimized, total_distance_shortest)
 
         route_coords = []
         for n in route:
@@ -69,6 +70,7 @@ class View(object):
         route_map.save(filepath)
         # This was broken on windows (and maybe on Mac). We'll fix it later
         # webbrowser.open(filepath, new=2)
+        webbrowser.open('file://' + os.path.realpath(filepath), new=2)
         self.done = True
         print('Done!')
 
@@ -84,7 +86,7 @@ class View(object):
             time.sleep(0.25)
         sys.stdout.flush()
 
-    def get_template(self):
+    def get_template(self, elevation_stats_optimized, elevation_stats_shortest, total_distance_optimized, total_distance_shortest):
         """
         Returns style template for folium map webpage
         :return: Stylesheet template
@@ -114,6 +116,15 @@ class View(object):
                                 });
                             }
                         });
+            $( "#datalegend" ).draggable({
+                            start: function (event, ui) {
+                                $(this).css({
+                                    right: "auto",
+                                    top: "auto",
+                                    bottom: "auto"
+                                });
+                            }
+                        });
         });
 
           </script>
@@ -130,11 +141,37 @@ class View(object):
           <ul class='legend-labels'>
             <li><span style='background:#42aaf5;opacity:0.75;'></span>Our Route</li>
             <li><span style='background:#eb4034;opacity:0.75;'></span>Shortest Length Route</li>
+          </ul>
+        </div>
+        </div>"""
+        template2 = """
+        <div id='datalegend' class='datalegend' 
+            style='position: absolute; z-index:9999; border:2px solid grey; background-color:rgba(255, 255, 255, 0.8);
+             border-radius:6px; padding: 10px; font-size:14px; right: 200px; bottom: 20px;'>
+        <div class='data-title'>Data</div>
+        <div class="row">
+          <ul class="column">
+            <u>Our Route</u><br>
+            <li>Total trip distance: {:,.0f} m</li>
+            <li>Net elevation gain: {:,.0f} m</li>
+            <li>Elevation gain (ascents): {:,.0f} m</li>
+            <li>Elevation loss (descents): {:,.0f} m</li>
+            <li>Total elevation change: {:,.0f} m</li>
 
+          </ul>
+          <ul class="column">
+            <u>Shortest Route</u><br>
+            <li>Total trip distance: {:,.0f} m</li>
+            <li>Net elevation gain: {:,.0f} m</li>
+            <li>Elevation gain (ascents): {:,.0f} m</li>
+            <li>Elevation loss (descents): {:,.0f} m</li>
+            <li>Total elevation change: {:,.0f} m</li>
           </ul>
         </div>
         </div>
-
+        """.format(total_distance_optimized, elevation_stats_optimized['net_change'], elevation_stats_optimized['ascents'], elevation_stats_optimized['descents'], elevation_stats_optimized['total_change'],
+        total_distance_shortest, elevation_stats_shortest['net_change'], elevation_stats_shortest['ascents'], elevation_stats_shortest['descents'], elevation_stats_shortest['total_change'])
+        template3 = """
         </body>
         </html>
 
@@ -176,7 +213,49 @@ class View(object):
           .maplegend a {
             color: #777;
             }
+            
+          .datalegend .data-title {
+            text-align: left;
+            margin-bottom: 5px;
+            font-weight: bold;
+            font-size: 90%;
+            }
+          .datalegend .row {
+            display: flex;
+            }
+          .datalegend .row ul{
+            flex: 50%;
+            margin: 0;
+            margin-bottom: 5px;
+            padding: 5px;
+            float: left;
+            list-style: none;
+            width: 200px;
+          }
+          .datalegend .row ul li {
+            font-size: 80%;
+            list-style: none;
+            margin-left: 10px;
+            line-height: 18px;
+            margin-bottom: 2px;
+            }
+          .datalegend .row ul u {
+            font-size: 80%;
+            list-style: none;
+            margin-left: 10px;
+            line-height: 18px;
+            margin-bottom: 2px;
+            }
+          .datalegend .legend-source {
+            font-size: 80%;
+            color: #777;
+            clear: both;
+            }
+          .datalegend a {
+            color: #777;
+            }
         </style>
         {% endmacro %}"""
+        template = template + template2 + template3
         return template
 

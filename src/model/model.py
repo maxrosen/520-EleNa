@@ -4,7 +4,6 @@ import networkx as nx
 from heapq import *
 import time
 
-
 class Model(object):
 
     def set_view(self, vobj):
@@ -40,7 +39,11 @@ class Model(object):
         print("Our algorithm took :", time.time() - t, " seconds")
         print("Printing Statistics of our algorithm's " + mode + "d elevation route")
         self.print_route_stats(G, optimized_route)
-        self.vobj.show_route(G, optimized_route, alt_route=[shortest_path])
+        elevation_stats_optimized = self.get_elevation_stats(G, optimized_route)
+        elevation_stats_shortest = self.get_elevation_stats(G, shortest_path)
+        total_distance_optimized = self.get_total_length(G, optimized_route)
+        total_distance_shortest = self.get_total_length(G, shortest_path)
+        self.vobj.show_route(G, optimized_route, elevation_stats_optimized, elevation_stats_shortest, total_distance_optimized, total_distance_shortest, alt_route=[shortest_path])
 
 
     def get_op_route(self, G, start, end, can_travel, mode):

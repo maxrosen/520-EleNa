@@ -1,7 +1,9 @@
 Minimize driving coords:
-42.4096, -72.5352
 
+
+42.4096, -72.5352
 42.3510, -72.5338
+50
 
 
 Maximize walking coords
@@ -13,3 +15,5 @@ Maximize biking coords
 42.3275, -72.6353
 
 42.3486, -72.6993
+
+

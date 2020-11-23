@@ -1,0 +1,94 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module controller</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong>controller</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/Users/maxrosen/Documents/Fall%202020/CS%20520/Final%20Project/520-EleNa/src/controller/controller.py">/Users/maxrosen/Documents/Fall 2020/CS 520/Final Project/520-EleNa/src/controller/controller.py</a></font></td></tr></table>
+    <p></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#aa55cc">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="os.html">os</a><br>
+</td><td width="25%" valign=top><a href="osmnx.html">osmnx</a><br>
+</td><td width="25%" valign=top><a href="pickle.html">pickle</a><br>
+</td><td width="25%" valign=top><a href="sys.html">sys</a><br>
+</td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ee77aa">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Classes</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl>
+<dt><font face="helvetica, arial"><a href="builtins.html#object">builtins.object</a>
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="controller.html#Controller">Controller</a>
+</font></dt></dl>
+</dd>
+</dl>
+ <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="Controller">class <strong>Controller</strong></a>(<a href="builtins.html#object">builtins.object</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#Controller">Controller</a>&nbsp;<a href="builtins.html#object">object</a><br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%">Methods defined here:<br>
+<dl><dt><a name="Controller-__init__"><strong>__init__</strong></a>(self)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
+
+<dl><dt><a name="Controller-get_inputs"><strong>get_inputs</strong></a>(self)</dt><dd><tt>Gets&nbsp;the&nbsp;parameters&nbsp;of&nbsp;elevation&nbsp;problem&nbsp;to&nbsp;solve</tt></dd></dl>
+
+<dl><dt><a name="Controller-get_map"><strong>get_map</strong></a>(self)</dt><dd><tt>Load&nbsp;in&nbsp;Pickle&nbsp;file&nbsp;of&nbsp;Hampshire&nbsp;County&nbsp;driving&nbsp;map&nbsp;as&nbsp;default.<br>
+Change&nbsp;file&nbsp;based&nbsp;on&nbsp;routing&nbsp;option.<br>
+:return:&nbsp;The&nbsp;selected&nbsp;graph&nbsp;of&nbsp;Hampshire&nbsp;County</tt></dd></dl>
+
+<dl><dt><a name="Controller-is_number"><strong>is_number</strong></a>(self, s)</dt><dd><tt>Determines&nbsp;if&nbsp;valid&nbsp;number<br>
+:param&nbsp;s:&nbsp;(number)&nbsp;Number&nbsp;to&nbsp;be&nbsp;validated</tt></dd></dl>
+
+<dl><dt><a name="Controller-set_model"><strong>set_model</strong></a>(self, model)</dt><dd><tt>Updates&nbsp;model&nbsp;and&nbsp;route&nbsp;of&nbsp;controller</tt></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#eeaa77">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl><dt><a name="-heapify"><strong>heapify</strong></a>(heap, /)</dt><dd><tt>Transform&nbsp;list&nbsp;into&nbsp;a&nbsp;heap,&nbsp;in-place,&nbsp;in&nbsp;O(len(heap))&nbsp;time.</tt></dd></dl>
+ <dl><dt><a name="-heappop"><strong>heappop</strong></a>(heap, /)</dt><dd><tt>Pop&nbsp;the&nbsp;smallest&nbsp;item&nbsp;off&nbsp;the&nbsp;heap,&nbsp;maintaining&nbsp;the&nbsp;heap&nbsp;invariant.</tt></dd></dl>
+ <dl><dt><a name="-heappush"><strong>heappush</strong></a>(heap, item, /)</dt><dd><tt>Push&nbsp;item&nbsp;onto&nbsp;heap,&nbsp;maintaining&nbsp;the&nbsp;heap&nbsp;invariant.</tt></dd></dl>
+ <dl><dt><a name="-heappushpop"><strong>heappushpop</strong></a>(heap, item, /)</dt><dd><tt>Push&nbsp;item&nbsp;on&nbsp;the&nbsp;heap,&nbsp;then&nbsp;pop&nbsp;and&nbsp;return&nbsp;the&nbsp;smallest&nbsp;item&nbsp;from&nbsp;the&nbsp;heap.<br>
+&nbsp;<br>
+The&nbsp;combined&nbsp;action&nbsp;runs&nbsp;more&nbsp;efficiently&nbsp;than&nbsp;<a href="#-heappush">heappush</a>()&nbsp;followed&nbsp;by<br>
+a&nbsp;separate&nbsp;call&nbsp;to&nbsp;<a href="#-heappop">heappop</a>().</tt></dd></dl>
+ <dl><dt><a name="-heapreplace"><strong>heapreplace</strong></a>(heap, item, /)</dt><dd><tt>Pop&nbsp;and&nbsp;return&nbsp;the&nbsp;current&nbsp;smallest&nbsp;value,&nbsp;and&nbsp;add&nbsp;the&nbsp;new&nbsp;item.<br>
+&nbsp;<br>
+This&nbsp;is&nbsp;more&nbsp;efficient&nbsp;than&nbsp;<a href="#-heappop">heappop</a>()&nbsp;followed&nbsp;by&nbsp;<a href="#-heappush">heappush</a>(),&nbsp;and&nbsp;can&nbsp;be<br>
+more&nbsp;appropriate&nbsp;when&nbsp;using&nbsp;a&nbsp;fixed-size&nbsp;heap.&nbsp;&nbsp;Note&nbsp;that&nbsp;the&nbsp;value<br>
+returned&nbsp;may&nbsp;be&nbsp;larger&nbsp;than&nbsp;item!&nbsp;&nbsp;That&nbsp;constrains&nbsp;reasonable&nbsp;uses&nbsp;of<br>
+this&nbsp;routine&nbsp;unless&nbsp;written&nbsp;as&nbsp;part&nbsp;of&nbsp;a&nbsp;conditional&nbsp;replacement:<br>
+&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;item&nbsp;&gt;&nbsp;heap[0]:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;item&nbsp;=&nbsp;<a href="#-heapreplace">heapreplace</a>(heap,&nbsp;item)</tt></dd></dl>
+</td></tr></table>
+</body></html>

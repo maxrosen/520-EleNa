@@ -1,18 +1,11 @@
-import sys
-import osmnx as ox
-from heapq import *
+from tkinter import *
+from tkinter.ttk import *
 import pickle as pkl
-from pick import pick
-import os
-
-sys.path.insert(1, './graphs')
+import osmnx as ox
 
 
-class Controller(object):
-    """
-    Controller object
-    """
-    def __init__(self):
+class Controller(Frame):
+    def __init__(self, master=Tk()):
         self.start_lat = None
         self.start_long = None
         self.end_lat = None
@@ -25,12 +18,19 @@ class Controller(object):
         self.start = None
         self.end = None
 
+        Frame.__init__(self)
+        master.title("520-EleNa")
+        master.resizable(width=False, height=False)
+        self.pack(padx=20, pady=20)
+        self.create_widgets()
+
     def set_model(self, model):
         """
         Updates model and route of controller
         """
         self.model = model
-        self.model.get_route(self.G, self.start, self.end, self.extra_travel, self.mode)
+        # self.model.get_route(self.G, self.start, self.end,
+        #                      self.extra_travel, self.mode)
 
     def is_number(self, s):
         """
@@ -49,74 +49,6 @@ class Controller(object):
         except (TypeError, ValueError):
             pass
         return False
-
-    def get_inputs(self):
-        """
-        Gets the parameters of elevation problem to solve
-        """
-        os.system('cls' if os.name == 'nt' else 'clear')
-        # Determine route type
-        travel_type_title = 'Please choose your routing type: '
-        travel_type_options = ['Driving', 'Walking', 'Biking']
-        self.travel_type = pick(travel_type_options, travel_type_title)[0].lower()
-        print('Selected routing for ' + self.travel_type)
-        print()
-
-        # Determine elevation max/min type
-        mode_title = 'Would you like to maximize or minimize elevation gain?'
-        mode_options = ['maximize', 'minimize']
-        self.mode = pick(mode_options, mode_title)[0].lower()
-        print('Algorithm will ' + self.mode + ' elevation gain')
-        print()
-
-        # get start coordinates
-        while True:
-            start = input("Please enter the Latitude and Longitude of the starting location (separated by a comma): \n")
-            if "," not in start:
-                print("Sorry, that input did not include a comma")
-                continue
-            else:
-                self.start_lat, self.start_long = start.split(",")
-                if self.is_number(self.start_lat) and self.is_number(self.start_long) and "." in self.start_lat and "." in self.start_long:
-                    break
-                else:
-                    print("Sorry, please enter valid numbers with decimals")
-                    continue
-        print("Starting location coordinates (", float(self.start_lat), ",",
-              float(self.start_long), ") : (lat,long)")
-        print()
-
-        # get end coordinates
-        while True:
-            end = input("Please enter the Latitude and Longitude of the end location (separated by a comma): \n")
-            if "," not in end:
-                print("Sorry, that input did not include a comma")
-                continue
-            else:
-                self.end_lat, self.end_long = end.split(",")
-                if self.is_number(self.end_lat) and self.is_number(self.end_long) and "." in self.end_lat and "." in self.end_long:
-                    break
-                else:
-                    print("Sorry, please enter valid numbers with decimals")
-                    continue
-        print("Ending location coordinates (", float(self.end_lat), ",", float(self.end_long), ") : (lat,long)")
-        print()
-
-        # Determine extra travel percentage
-        while True:
-            self.extra_travel = input("Please enter the percentage of length over the shortest path you are willing to travel: \n")
-            if self.is_number(self.extra_travel):
-                self.extra_travel = float(self.extra_travel)
-                break
-            else:
-                print("Please enter a number")
-                continue
-        print()
-
-        # Update graph with new params
-        self.G = self.get_map()
-        self.start = ox.get_nearest_node(self.G, (float(self.start_lat), float(self.start_long)))
-        self.end = ox.get_nearest_node(self.G, (float(self.end_lat), float(self.end_long)))
 
     def get_map(self):
         """
@@ -138,3 +70,122 @@ class Controller(object):
         infile.close()
 
         return G
+
+    def confirm(self, travel_type, mode, start_lat, start_long, end_lat, end_long, extra_travel):
+        if not self.is_number(start_lat) or not self.is_number(start_long) or not "." in start_lat or not "." in start_long:
+            newWindow = Toplevel(self)
+            Label(newWindow,
+                  text="Sorry, please enter valid geocoordinate with decimals").pack()
+        elif not self.is_number(extra_travel):
+            newWindow = Toplevel(self)
+            Label(newWindow,
+                text="Sorry, please enter a valid number for extra travel").pack()
+        else:
+            self.start_lat = float(start_lat)
+            self.start_long = float(start_long)
+            self.end_lat = float(end_lat)
+            self.end_long = float(end_long)
+            self.extra_travel = float(extra_travel)
+            self.mode = mode.lower()
+            self.travel_type = travel_type.lower()
+            self.G = self.get_map()
+            self.start = ox.get_nearest_node(
+                self.G, (self.start_lat, self.start_long))
+            self.end = ox.get_nearest_node(
+                self.G, (self.end_lat, self.end_long))
+
+            self.model.get_route(self.G, self.start, self.end,
+                             self.extra_travel, self.mode)
+
+        pass
+
+    def create_widgets(self):
+        frame = Frame(self)
+        frame.pack(fill=X, side=TOP)
+
+        travel_type_title = Label(frame)
+        travel_type_title["text"] = "Please choose your routing type: "
+        travel_type_title.pack(side=LEFT)
+
+        travel_type_var = StringVar(frame)
+        # travel_type_var.set("Walking")  # default value
+        travel_type_options = OptionMenu(
+            frame, travel_type_var, "Driving", "Driving", "Walking", "Biking")
+        travel_type_options.pack(side=LEFT)
+        ##############################
+        frame = Frame(self)
+        frame.pack(fill=X, side=TOP, pady=5)
+
+        mode_title = Label(
+            frame, text="Would you like to maximize or minimize elevation gain?")
+        mode_title.pack(side=LEFT)
+
+        mode_var = StringVar(frame)
+        # mode_var.set("Minimize")  # default value
+        mode_options = OptionMenu(
+            frame, mode_var, "Minimize", "Minimize", "Maximize")
+        mode_options.pack(side=LEFT)
+        ################################
+        frame = Frame(self)
+        frame.pack(fill=X, side=TOP, pady=5)
+
+        start_location_title = Label(
+            frame, text="Please enter the Latitude and Longitude of the starting location")
+        start_location_title.pack(side=LEFT)
+        ################################
+        frame = Frame(self)
+        frame.pack(fill=X, side=TOP, pady=5)
+
+        start_lat_title = Label(
+            frame, text="Latitude:")
+        start_lat_title.pack(side=LEFT)
+        start_lat_entry = Entry(frame)
+        start_lat_entry.pack(side=LEFT)
+
+        start_long_title = Label(
+            frame, text="Longitude:")
+        start_long_title.pack(side=LEFT)
+        start_long_entry = Entry(frame)
+        start_long_entry.pack(side=LEFT)
+        ################################
+        frame = Frame(self)
+        frame.pack(fill=X, side=TOP, pady=5)
+
+        end_location_title = Label(
+            frame, text="Please enter the Latitude and Longitude of the ending location")
+        end_location_title.pack(side=LEFT)
+        ################################
+        frame = Frame(self)
+        frame.pack(fill=X, side=TOP, pady=5)
+
+        end_lat_title = Label(
+            frame, text="Latitude:")
+        end_lat_title.pack(side=LEFT)
+        end_lat_entry = Entry(frame)
+        end_lat_entry.pack(side=LEFT)
+
+        end_long_title = Label(
+            frame, text="Longitude:")
+        end_long_title.pack(side=LEFT)
+        end_long_entry = Entry(frame)
+        end_long_entry.pack(side=LEFT)
+        #################################
+        frame = Frame(self)
+        frame.pack(fill=X, side=TOP, pady=5)
+
+        extra_travel_title = Label(
+            frame, text="Please enter the percentage of length over the shortest path you are willing to travel")
+        extra_travel_title.pack(side=LEFT)
+        frame = Frame(self)
+        frame.pack(fill=X, side=TOP, pady=5)
+        extra_travel_entry = Entry(frame)
+        extra_travel_entry.pack()
+        ################################
+        frame = Frame(self)
+        frame.pack(fill=X, side=TOP, pady=5)
+        # sep = Separator()
+        # sep.pack()
+
+        button = Button(frame, text="Get route!", command=lambda: self.confirm(
+            travel_type_var.get(), mode_var.get(), start_lat_entry.get(), start_long_entry.get(), end_lat_entry.get(), end_long_entry.get(), extra_travel_entry.get()))
+        button.pack()

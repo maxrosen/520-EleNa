@@ -7,6 +7,7 @@ sys.path.insert(1, './view')
 from controller import Controller
 from model import Model
 from view import View
+# from controller_OLD import Controller
 
 class Main(object):
 
@@ -18,11 +19,12 @@ class Main(object):
         Executes program to find optimized route based on user inputs
         """
         model = Model()
-        controller = Controller()
-        controller.get_inputs()
         view = View()
+        controller = Controller()
+
         model.set_view(view)
         controller.set_model(model)
+        controller.mainloop()
 
 if __name__ == '__main__':
     model = Main()

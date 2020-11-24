@@ -7,7 +7,6 @@ sys.path.insert(1, './view')
 from controller import Controller
 from model import Model
 from view import View
-# from controller_OLD import Controller
 
 class Main(object):
 

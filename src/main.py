@@ -18,11 +18,12 @@ class Main(object):
         Executes program to find optimized route based on user inputs
         """
         model = Model()
-        controller = Controller()
-        controller.get_inputs()
         view = View()
+        controller = Controller()
+
         model.set_view(view)
         controller.set_model(model)
+        controller.mainloop()
 
 if __name__ == '__main__':
     model = Main()
